@@ -3,6 +3,7 @@ version: "3.9"
 services:
 
   mysql-microservicio:
+	container-name: mysql:8
     image: mysql:8.0.34
     ports:
       - "3307:3306"
@@ -18,6 +19,7 @@ services:
     restart: always
 
   postgres-microservicio:
+	container-name: postgres17
     image: postgres:17.7
     ports:
       - "5433:5432"
@@ -32,10 +34,10 @@ services:
     restart: always
 
   msvc-usuarios:
-    image: usuarios:latest
-    build:
-      context: .
-      dockerfile: msvc-usuarios/Dockerfile
+    image: zvalentinoz/usuarios:latest
+    # build:
+    #   context: .
+    #   dockerfile: msvc-usuarios/Dockerfile
     env_file:
       - ./msvc-usuarios/.env
     ports:
@@ -46,10 +48,10 @@ services:
       - mysql-microservicio
 
   msvc-cursos:
-    image: cursos:latest
-    build:
-      context: .
-      dockerfile: msvc-cursos/Dockerfile
+    image: zvalentinoz/cursos:latest
+   # build:
+   #   context: .
+   #   dockerfile: msvc-cursos/Dockerfile
     env_file:
       - ./msvc-cursos/.env
     ports:

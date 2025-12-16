@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+
+  mysql-microservicio:
+    image: mysql:8.0.34
+    ports:
+      - "3307:3306"
+    networks:
+      - spring
+    volumes:
+      - data-mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: always
+
+  postgres-microservicio:
+    image: postgres:17.7
+    ports:
+      - "5433:5432"
+    networks:
+      - spring
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    restart: always
+
+  msvc-usuarios:
+    image: usuarios:latest
+    build:
+      context: .
+      dockerfile: msvc-usuarios/Dockerfile
+    env_file:
+      - ./msvc-usuarios/.env
+    ports:
+      - "8001:8001"
+    networks:
+      - spring
+    depends_on:
+      - mysql-microservicio
+
+  msvc-cursos:
+    image: cursos:latest
+    build:
+      context: .
+      dockerfile: msvc-cursos/Dockerfile
+    env_file:
+      - ./msvc-cursos/.env
+    ports:
+      - "8002:8002"
+    networks:
+      - spring
+    depends_on:
+      - postgres-microservicio
+
+networks:
+  spring:
+    driver: bridge
+
+volumes:
+  data-mysql:
+  data-postgres:
